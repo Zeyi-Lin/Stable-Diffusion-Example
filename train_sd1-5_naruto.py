@@ -1,3 +1,43 @@
+# 尝试一下如何多卡训练
+# 尝试一下更换模型_SD-XL等
+# 宝可梦数据集https://huggingface.co/datasets/reach-vb/pokemon-blip-captions
+# 命令：accelerate launch --mixed_precision="fp16" --multi_gpu train_sd_1-5.py --seed 42 --use_ema --resolution=512 --center_crop --random_flip --train_batch_size=1 --gradient_accumulation_steps=4 --gradient_checkpointing --max_train_steps=15000 --learning_rate=1e-05 --max_grad_norm=1 --lr_scheduler=constant --lr_warmup_steps=0 --output_dir=sd-naruto-model --validation_epochs 2
+"""
+[Train]
+export MODEL_NAME="CompVis/stable-diffusion-v1-4"
+export DATASET_NAME="lambdalabs/naruto-blip-captions"
+
+accelerate launch --mixed_precision="fp16" --multi_gpu  train_text_to_image.py \
+  --pretrained_model_name_or_path=$MODEL_NAME \
+  --dataset_name=$DATASET_NAME \
+  --use_ema \
+  --resolution=512 --center_crop --random_flip \
+  --train_batch_size=1 \
+  --gradient_accumulation_steps=4 \
+  --gradient_checkpointing \
+  --max_train_steps=15000 \
+  --learning_rate=1e-05 \
+  --max_grad_norm=1 \
+  --seed=42 \
+  --lr_scheduler="constant" \
+  --lr_warmup_steps=0 \
+  --output_dir="sd-naruto-model"
+"""
+
+"""
+[LORA]
+accelerate launch --mixed_precision="fp16" train_sd_1-5_lora.py \
+  --caption_column="text" \
+  --resolution=512 --random_flip \
+  --train_batch_size=1 \
+  --num_train_epochs=100 --checkpointing_steps=5000 \
+  --learning_rate=1e-04 --lr_scheduler="constant" --lr_warmup_steps=0 \
+  --seed=42 \
+  --output_dir="sd-naruto-model-lora" \
+  --validation_prompt="cute dragon creature" \
+"""
+# accelerate launch --mixed_precision="fp16" train_sd_1-5_lora.py --caption_column="text" --resolution=512 --random_flip --train_batch_size=1 --num_train_epochs=100 --checkpointing_steps=5000 --learning_rate=1e-04 --lr_scheduler="constant" --lr_warmup_steps=0 --seed=42 --output_dir="sd-naruto-model-lora" --validation_prompt="cute dragon creature"
+
 import logging
 import math
 import os
@@ -112,9 +152,9 @@ def main():
     
     # 定义swanlab_tracker
     swanlab_tracker = SwanLabTracker(
-            "Text2Image",
-            experiment_name="SD1-4_火影忍者",
-            description="火影忍者SD训练-基础模型：sd-v1.4；数据集naruto-blip-captions；https://huggingface.co/datasets/lambdalabs/naruto-blip-captions "
+            "SD-Naruto",
+            experiment_name="SD1-5_火影忍者",
+            description="基础模型：sd-v1.5；数据集naruto-blip-captions；"
             ),
     
     # 初始化acclerator
