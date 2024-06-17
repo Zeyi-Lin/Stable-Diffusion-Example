@@ -1,0 +1,7 @@
+torch
+torchvision
+swanlab
+transformers
+diffusers
+datasets
+accelerate
