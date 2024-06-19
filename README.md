@@ -45,3 +45,8 @@ python train_sd1-5_naruto.py \
   --output_dir="sd-naruto-model"
 ```
 
+## 3. 推理
+
+```bash
+python predict.py
+```
